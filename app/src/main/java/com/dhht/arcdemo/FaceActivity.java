@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
@@ -57,13 +58,14 @@ public class FaceActivity extends AppCompatActivity {
                         for (int i = 0; i < fsdkFaces.size(); i++) {
                             AFT_FSDKFace fsdkFace = fsdkFaces.get(i);
                             AFR_FSDKFace frFeature = ArcsoftSDK.getInstance().extractFRFeature(data, mWidth, mHeight, fsdkFace.getRect(), fsdkFace.getDegree());
-                            if (frFeature != null){
+                            if (frFeature != null) {
                                 Face face = new Face();
                                 face.setName("张三" + (i + 1) + "号");
                                 face.setFaceData(frFeature.getFeatureData());
                                 faceList.add(face);
                             }
                         }
+                        finish();
                         Toast.makeText(FaceActivity.this, "人脸注册成功：" + faceList.size() + "人", Toast.LENGTH_SHORT).show();
                     }
                     return;
@@ -77,7 +79,22 @@ public class FaceActivity extends AppCompatActivity {
 
                 //人脸查询
                 if (key == 2) {
-
+                    if (fsdkFaces != null && fsdkFaces.size() > 0 && faceList.size() != 0) {
+                        AFT_FSDKFace fsdkFace = fsdkFaces.get(0);
+                        AFR_FSDKFace face1 = ArcsoftSDK.getInstance().extractFRFeature(data, mWidth, mHeight, fsdkFace.getRect(), fsdkFace.getDegree());
+                        AFR_FSDKFace face2 = new AFR_FSDKFace();
+                        face2.setFeatureData(faceList.get(0).getFaceData());
+                        float score = ArcsoftSDK.getInstance().match(face1, face2);
+                        showToast("相似度:" + score*100 + "%");
+                        Log.d("======","thread name:"+Thread.currentThread().getName());
+                        key = -1;
+                        surfce_preview.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                key = 2;
+                            }
+                        },1000*1);
+                    }
                     return;
                 }
 
@@ -98,5 +115,13 @@ public class FaceActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    private void showToast(final String s){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(FaceActivity.this, s, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }

@@ -92,7 +92,7 @@ public class ArcsoftSDK {
         if (mFrManager == null) {
             mFrManager = FrManager.getInstance();
         }
-        mFrManager.initEngine(config.getAppid(), config.getFr_key());
+        mFrManager.initEngine(config.getAppid(), config.getSdk_key());
 
         //人脸追踪
         if (mFtManager == null) {
