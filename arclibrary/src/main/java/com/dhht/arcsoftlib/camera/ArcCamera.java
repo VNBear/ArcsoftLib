@@ -1,4 +1,4 @@
-package com.dhht.arcdemo;
+package com.dhht.arcsoftlib.camera;
 
 // ┏┓　　　┏┓
 // ┏┛┻━━━┛┻┓
@@ -42,7 +42,7 @@ import java.util.List;
  * Creator： VNBear
  * Description:
  **/
-public class CameraUtil implements SurfaceHolder.Callback {
+public class ArcCamera implements SurfaceHolder.Callback {
 
     private SurfaceView mPreSurface, mRectSurface;
     private Camera mCamera;
@@ -60,14 +60,14 @@ public class CameraUtil implements SurfaceHolder.Callback {
     //人脸框的颜色
     private int mColor;
 
-    private CameraUtil() {
+    private ArcCamera() {
     }
 
     private static final class InstanceHolder {
-        private static CameraUtil INSTANCE = new CameraUtil();
+        private static ArcCamera INSTANCE = new ArcCamera();
     }
 
-    public static CameraUtil getInstance() {
+    public static ArcCamera getInstance() {
         return InstanceHolder.INSTANCE;
     }
 
@@ -175,38 +175,40 @@ public class CameraUtil implements SurfaceHolder.Callback {
     }
 
     private void drawFace(List<AFT_FSDKFace> ftList) {
-        if (mRectSurface != null && ftList != null && ftList.size() > 0) {
+        if (mRectSurface != null ) {
+
             Canvas canvas = mRectSurface.getHolder().lockCanvas();
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            if (ftList != null && ftList.size() > 0){
+                Paint paint = new Paint();
+                paint.setColor(Color.RED);
+                paint.setStyle(Paint.Style.FILL);
+                paint.setStrokeWidth(5);
+                paint.setTextSize(80);
 
-            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.FILL);
-            paint.setStrokeWidth(5);
-            paint.setTextSize(80);
+                for (AFT_FSDKFace fsdkFace : ftList) {
+                    Rect rect = fsdkFace.getRect();
+                    if (rect != null) {
+                        //根据相机ID和画面预览大小调整人脸框位置
+                        Rect adjustedRect = DrawUtils.adjustRect(rect, mPreviewSizeX, mPreviewSizeY,
+                                canvas.getWidth(), canvas.getHeight(), mDegress, mCameraId);
 
-            for (AFT_FSDKFace fsdkFace : ftList) {
-                Rect rect = fsdkFace.getRect();
-                if (rect != null) {
-                    //根据相机ID和画面预览大小调整人脸框位置
-                    Rect adjustedRect = DrawUtils.adjustRect(rect, mPreviewSizeX, mPreviewSizeY,
-                            canvas.getWidth(), canvas.getHeight(), mDegress, mCameraId);
+                        //画人脸框
+                        DrawUtils.drawFaceRect(canvas, adjustedRect, mColor, 5);
 
-                    //画人脸框
-                    DrawUtils.drawFaceRect(canvas, adjustedRect, mColor, 5);
+                        //画人员姓名
+                        if (rect.right < mPreviewSizeX - 100) {
+                            canvas.drawText("张三", rect.right + 30, rect.bottom, paint);
+                        } else {
+                            canvas.drawText("张三", rect.left - 30, rect.bottom, paint);
+                        }
 
-                    //画人员姓名
-                    if (rect.right < mPreviewSizeX - 100) {
-                        canvas.drawText("张三", rect.right + 30, rect.bottom, paint);
-                    } else {
-                        canvas.drawText("张三", rect.left - 30, rect.bottom, paint);
-                    }
-
-                    //回调接口给外部人脸的位置信息
-                    if (mCameraPreviewListener != null) {
-                        Canvas temp = mCameraPreviewListener.onDrawFace(canvas, adjustedRect, mPreviewSizeX, mPreviewSizeY, mDegress, mCameraId);
-                        if (temp != null) {
-                            canvas = temp;
+                        //回调接口给外部人脸的位置信息
+                        if (mCameraPreviewListener != null) {
+                            Canvas temp = mCameraPreviewListener.onDrawFace(canvas, adjustedRect, mPreviewSizeX, mPreviewSizeY, mDegress, mCameraId);
+                            if (temp != null) {
+                                canvas = temp;
+                            }
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-package com.dhht.arcdemo;
+package com.dhht.arcsoftlib.camera;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;

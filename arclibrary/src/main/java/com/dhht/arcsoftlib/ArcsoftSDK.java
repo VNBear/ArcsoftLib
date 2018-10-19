@@ -46,6 +46,7 @@ public class ArcsoftSDK {
 
     private final String TAG = "======" + this.getClass().getSimpleName();
     private Context mContext;
+    private ArcsoftConfig mConfig;
     private FdManager mFdManager;
     private FrManager mFrManager;
     private FtManager mFtManager;
@@ -64,6 +65,7 @@ public class ArcsoftSDK {
 
     public void init(Context context, ArcsoftConfig config) {
         this.mContext = context;
+        this.mConfig = config;
         initEngine(config);
     }
 
@@ -186,7 +188,7 @@ public class ArcsoftSDK {
      * @param height
      * @return
      */
-    public AFR_FSDKFace extractFRFeature(byte[] data, int width, int height, Rect rect,int degree) {
+    public AFR_FSDKFace extractFRFeature(byte[] data, int width, int height, Rect rect, int degree) {
         if (mFrManager == null) {
             throw new RuntimeException("please init ArcsoftSDK at first");
         }
@@ -222,5 +224,39 @@ public class ArcsoftSDK {
         return mFtManager.faceFeatureDetect(data, width, height);
     }
 
+    /**
+     * 获取一个新的fd引擎
+     *
+     * @return
+     */
+    public FdManager getNewInstanceFdManager() {
+        if (mConfig == null) {
+            throw new RuntimeException("please init ArcsoftSDK at first");
+        }
+        return FdManager.getNewInstance(mConfig.getAppid(), mConfig.getFd_key());
+    }
 
+    /**
+     * 获取一个新的ft引擎
+     *
+     * @return
+     */
+    public FtManager getNewInstanceFtManager() {
+        if (mConfig == null) {
+            throw new RuntimeException("please init ArcsoftSDK at first");
+        }
+        return FtManager.getNewInstance(mConfig.getAppid(), mConfig.getFt_key());
+    }
+
+    /**
+     * 获取一个新的fr引擎
+     *
+     * @return
+     */
+    public FrManager getNewInstanceFrManager() {
+        if (mConfig == null) {
+            throw new RuntimeException("please init ArcsoftSDK at first");
+        }
+        return FrManager.getNewInstance(mConfig.getAppid(), mConfig.getSdk_key());
+    }
 }

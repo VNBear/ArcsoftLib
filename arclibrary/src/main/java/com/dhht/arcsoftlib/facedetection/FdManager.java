@@ -50,6 +50,12 @@ public class FdManager {
         return InstanceHolder.INSTANCE;
     }
 
+    public static FdManager getNewInstance(String appid, String key) {
+        FdManager newInstance = new FdManager();
+        newInstance.initEngine(appid, key);
+        return newInstance;
+    }
+
     public void initEngine(String appid, String key) {
         mFdEngine = new AFD_FSDKEngine();
         int result = mFdEngine.AFD_FSDK_InitialFaceEngine(appid, key, AFD_FSDKEngine.AFD_OPF_0_HIGHER_EXT, 16, 5).getCode();
@@ -69,6 +75,7 @@ public class FdManager {
 
     /**
      * 检测输入的图像中存在的人脸
+     *
      * @param image
      * @param width
      * @param height

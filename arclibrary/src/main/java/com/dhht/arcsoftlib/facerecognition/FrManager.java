@@ -22,7 +22,6 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import com.arcsoft.facedetection.AFD_FSDKError;
-import com.arcsoft.facedetection.AFD_FSDKFace;
 import com.arcsoft.facerecognition.AFR_FSDKEngine;
 import com.arcsoft.facerecognition.AFR_FSDKError;
 import com.arcsoft.facerecognition.AFR_FSDKFace;
@@ -50,6 +49,12 @@ public class FrManager {
         return InstanceHolder.INSTANCE;
     }
 
+    public static FrManager getNewInstance(String appid, String key) {
+        FrManager newInstance = new FrManager();
+        newInstance.initEngine(appid, key);
+        return newInstance;
+    }
+
     public void initEngine(String appid, String key) {
         mFrEngine = new AFR_FSDKEngine();
         int result = mFrEngine.AFR_FSDK_InitialEngine(appid, key).getCode();
@@ -73,7 +78,6 @@ public class FrManager {
      * @param data
      * @param width
      * @param height
-     * @param afdFsdkFace
      * @return
      */
     public AFR_FSDKFace extractFRFeature(byte[] data, int width, int height, Rect rect, int degree) {

@@ -23,6 +23,7 @@ import android.util.Log;
 import com.arcsoft.facetracking.AFT_FSDKEngine;
 import com.arcsoft.facetracking.AFT_FSDKError;
 import com.arcsoft.facetracking.AFT_FSDKFace;
+import com.dhht.arcsoftlib.facedetection.FdManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,13 @@ public class FtManager {
 
     public static FtManager getInstance() {
         return InstanceHolder.INSTANCE;
+    }
+
+
+    public static FtManager getNewInstance(String appid, String key) {
+        FtManager newInstance = new FtManager();
+        newInstance.initEngine(appid, key);
+        return newInstance;
     }
 
     public void initEngine(String appid, String key) {

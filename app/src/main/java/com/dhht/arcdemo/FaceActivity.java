@@ -13,6 +13,8 @@ import com.arcsoft.facerecognition.AFR_FSDKFace;
 import com.arcsoft.facetracking.AFT_FSDKFace;
 import com.dhht.arcsoftlib.ArcsoftConfig;
 import com.dhht.arcsoftlib.ArcsoftSDK;
+import com.dhht.arcsoftlib.camera.ArcCamera;
+import com.dhht.arcsoftlib.camera.CameraPreviewListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +42,10 @@ public class FaceActivity extends AppCompatActivity {
         ArcsoftSDK.getInstance().init(getApplicationContext(), new ArcsoftConfig.Builder().builder());
         key = getIntent().getIntExtra(KEY, 0);
 
-        CameraUtil.getInstance().init(CAMERAID, DEGRESS, Color.GREEN);
-        CameraUtil.getInstance().openCamera(this, surfce_preview, surfce_rect);
-        CameraUtil.getInstance().setCameraPreviewListener(new CameraPreviewListener() {
+
+        ArcCamera.getInstance().init(CAMERAID, DEGRESS, Color.GREEN);
+        ArcCamera.getInstance().openCamera(this, surfce_preview, surfce_rect);
+        ArcCamera.getInstance().setCameraPreviewListener(new CameraPreviewListener() {
 
             @Override
             public void onPreviewSize(int width, int height) {
@@ -85,15 +88,15 @@ public class FaceActivity extends AppCompatActivity {
                         AFR_FSDKFace face2 = new AFR_FSDKFace();
                         face2.setFeatureData(faceList.get(0).getFaceData());
                         float score = ArcsoftSDK.getInstance().match(face1, face2);
-                        showToast("相似度:" + score*100 + "%");
-                        Log.d("======","thread name:"+Thread.currentThread().getName());
+                        showToast("相似度:" + score * 100 + "%");
+                        Log.d("======", "thread name:" + Thread.currentThread().getName());
                         key = -1;
                         surfce_preview.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 key = 2;
                             }
-                        },1000*1);
+                        }, 1000 * 1);
                     }
                     return;
                 }
@@ -115,7 +118,7 @@ public class FaceActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void showToast(final String s){
+    private void showToast(final String s) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
